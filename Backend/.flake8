@@ -1,0 +1,11 @@
+[flake8]
+max-line-length = 120
+
+# extend the defaults ingored codes errors
+# E402 : imports
+extend-ignore = E402, E231, E203, E722, W503, BLK100
+extend-exclude =
+    .tox,
+    __pycache__,
+    venv*
+max-complexity = 15
