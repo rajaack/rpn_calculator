@@ -1,5 +1,3 @@
-from Backend.Common.measure_time_func_decorator import measure_time_func
-
 OPERATORS = {
     "+": lambda x, y: x + y,
     "-": lambda x, y: x - y,
@@ -8,7 +6,6 @@ OPERATORS = {
 }
 
 
-@measure_time_func
 def rpn_calculator(equation: list) -> float:
     """
     Reverse Polish Notation Calculator
@@ -22,13 +19,13 @@ def rpn_calculator(equation: list) -> float:
     """
 
     stack = []
-    for input in equation:
-        if input.isdigit():
-            stack.append(float(input))
-        elif input in OPERATORS.keys():
-            value = OPERATORS[input](stack.pop(), stack.pop())
+    for item in equation:
+        if item.isdigit():
+            stack.append(float(item))
+        elif item in OPERATORS.keys() and len(stack) >= 2:
+            value = OPERATORS[item](stack.pop(), stack.pop())
             stack.append(value)
         else:
-            raise ValueError(f"Invalid input: {input}")
+            raise ValueError(f"Invalid input: {item}")
 
     return stack.pop()
