@@ -1,10 +1,13 @@
+import io
 from datetime import datetime
 from typing import Annotated
 
+from Adapters.calculation_to_df import calculation_to_df
 from Domain.rpn_calculator import rpn_calculator
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import Path
+from fastapi.responses import StreamingResponse
 from Infrastructure.database import create_db_and_tables
 from Infrastructure.models import Calculation
 from Selectors.calculation_selectors import get_calculation_db
@@ -17,6 +20,33 @@ app = FastAPI()
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+
+
+@app.get("/get_csv")
+async def get_csv(skip: int = 0, limit: int = 100):
+    """
+
+    Get a list of Calculations in csv file.
+
+    Args:
+
+        skip (int, optional): The number of items to skip. Defaults to 0.
+
+        limit (int, optional): The maximum number of items to return. Defaults to 100.
+
+    Returns:
+
+        csv (StreamingResponse): A StreamingResponse containing a CSV file.
+
+    """
+
+    calculations = get_calculations_db(skip=skip, limit=limit)
+    df = calculation_to_df(calculations)
+    stream = io.StringIO()
+    df.to_csv(stream, sep="|")
+    response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    return response
 
 
 @app.get("/calculations", response_model=list[Calculation])
