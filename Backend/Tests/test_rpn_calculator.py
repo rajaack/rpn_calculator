@@ -3,7 +3,6 @@ import pytest
 from Backend.RpnCalculator.Domain.rpn_calculator import rpn_calculator
 
 
-
 class TestRPNCalculator:
     """Test Reverse Polish Notation Calculator"""
 

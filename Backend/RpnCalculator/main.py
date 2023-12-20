@@ -41,6 +41,10 @@ async def get_csv(skip: int = 0, limit: int = 100):
     """
 
     calculations = get_calculations_db(skip=skip, limit=limit)
+
+    if not calculations:
+        raise HTTPException(status_code=404, detail="Ressource non trouvée.")
+
     df = calculation_to_df(calculations)
     stream = io.StringIO()
     df.to_csv(stream, sep="|")
